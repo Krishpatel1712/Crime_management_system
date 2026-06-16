@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: criminaldb
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppass
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./criminalinfo.sql:/docker-entrypoint-initdb.d/01-criminalinfo.sql:ro
+    ports:
+      - "3307:3306"
+
+  web:
+    image: php:8.1-apache
+    restart: always
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "8000:80"
+    depends_on:
+      - db
+
+volumes:
+  db_data:
